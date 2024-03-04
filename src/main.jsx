@@ -1,13 +1,24 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Home from './Home.jsx'
+import Home from './pages/Home.jsx'
+import Pins from './pages/Pins.jsx'
+import Navbar from './components/Navbar.jsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <Home />
+    element: <Navbar />,
+    children: [
+      {
+        path: '/',
+        element: <Home />
+      },
+      {
+        path: '/pins',
+        element: <Pins />
+      }
+    ]
   }
 ])
 

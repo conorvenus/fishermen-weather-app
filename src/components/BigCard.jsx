@@ -6,7 +6,7 @@ function BigCard({ wind, rain, humidity }) {
                 <p className="text-light-gray">Wind</p>
             </div>
             <div className="h-[60%] w-full flex items-center flex-col justify-center border border-l-0 border-y-0 border-r-light-gray/20">
-                <h1 className="font-bold">{rain}%</h1>
+                <h1 className="font-bold">{rain} mm</h1>
                 <p className="text-light-gray">Precipitation</p>
             </div>
             <div className="h-full w-full flex items-center flex-col justify-center">

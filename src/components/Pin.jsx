@@ -1,8 +1,29 @@
+import { useState, useEffect } from "react"
+
+const key = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
+
 function Pin({ location }) {
+    const [image, setImage] = useState(null)
+
+    async function fetchImage() {
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${location?.name}&per_page=1`, {
+            method: "GET",
+            headers: {
+                Authorization: key
+            }
+        })
+        const data = await response.json()
+        setImage(data.photos[0].src.large)
+    }
+
+    useEffect(() => {
+        fetchImage()
+    }, [])
+
     return (
         <div className="bg-dark-gray border border-gray h-full max-h-60 rounded-2xl w-full shadow-primary text-center p-4 grid grid-cols-3 gap-4 items-center">
             <div className="rounded-2xl shadow-primary overflow-hidden h-full">
-                <img className="h-full w-full object-cover" src="https://wallpapers.com/images/hd/beautiful-sunset-pictures-ir85pxnajbekgbhh.jpg" />
+                <img className="h-full w-full object-cover" src={image} />
             </div>
             <div className="flex flex-col items-start gap-2 col-span-2">
                 <h1 className="text-white font-medium text-left">{location?.name}, <span className="font-normal text-light-gray">{location?.country}</span></h1>

@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react"
+import { useLocations } from "../hooks/UseLocations.jsx"
+import { useNavigate } from "react-router-dom"
 
 const key = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
 
 function Pin({ location }) {
     const [image, setImage] = useState(null)
+    const { selectLocation } = useLocations()
+    const navigate = useNavigate()
 
     async function fetchImage() {
         const response = await fetch(`https://api.pexels.com/v1/search?query=${location?.name}&per_page=1`, {
@@ -19,6 +23,11 @@ function Pin({ location }) {
     useEffect(() => {
         fetchImage()
     }, [])
+
+    function viewLocation() {
+        selectLocation(location)
+        navigate("/")
+    }
 
     return (
         <div className="bg-dark-gray border border-gray h-full max-h-60 rounded-2xl w-full shadow-primary text-center p-4 grid grid-cols-3 gap-4 items-center">
@@ -39,10 +48,17 @@ function Pin({ location }) {
                         <p>Next 7 Days</p>
                     </div>
                 </div>
-                <button className="bg-gray rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
-                    <i className="fa-solid fa-eye-slash"></i>
-                    Viewing
-                </button>
+                {location.selected ? (
+                    <button disabled className="bg-gray rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
+                        <i className="fa-solid fa-eye-slash"></i>
+                        Viewing
+                    </button>
+                ) : (
+                    <button onClick={viewLocation} className="bg-blue rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
+                        <i className="fa-solid fa-eye"></i>
+                        View
+                    </button>
+                )}
             </div>
         </div>
     )

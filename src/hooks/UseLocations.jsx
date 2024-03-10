@@ -1,0 +1,47 @@
+import { createContext, useState, useContext } from "react"
+
+const LocationContext = createContext(null)
+
+function LocationProvider({ children }) {
+    const [locations, setLocations] = useState([])
+
+    function addLocation(location) {
+        console.log(location)
+        const existing = locations.find(l => l.name === location.name && l.country === location.country)
+        if (existing) {
+            return
+        }
+        setLocations([...locations, location])
+    }
+
+    function removeLocation(location) {
+        setLocations(locations => locations.filter(l => l !== location))
+    }
+
+    function getSelectedLocation() {
+        return locations.find(l => l.selected)
+    }
+
+    function selectLocation(location) {
+        setLocations(locations => locations.map(l => {
+            l.selected = l.name === location.name && l.country === location.country
+            return l
+        }))
+    }
+
+    return (
+        <LocationContext.Provider value={{addLocation, removeLocation, selectLocation, getSelectedLocation, locations}}>
+            {children}
+        </LocationContext.Provider>
+    );
+} 
+
+function useLocations() {
+    const context = useContext(LocationContext)
+    if (!context) {
+        throw new Error("useLocation must be used within a LocationProvider")
+    }
+    return context
+}
+
+export { LocationProvider, useLocations }

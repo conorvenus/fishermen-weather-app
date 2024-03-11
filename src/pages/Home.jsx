@@ -4,6 +4,7 @@ import CardList from "../components/CardList.jsx"
 import GlowCircle from "../components/GlowCircle.jsx"
 import WeatherInfo from "../components/WeatherInfo.jsx"
 import { useLocations } from "../hooks/UseLocations.jsx"
+import { getWeatherIcon } from "../utils.jsx"
 
 const key = "905f1a7f4bc64c91bb1150432240403"
 
@@ -58,7 +59,7 @@ function Home() {
         </header>
 
         <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
-            <WeatherInfo temperature={weatherData?.current?.temp_c} summary={"Sunny"} location={weatherData?.location} />
+            <WeatherInfo temperature={weatherData?.current?.temp_c} summary={"Sunny"} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} />
             <BigCard wind={weatherData?.current?.wind_kph} rain={weatherData?.current?.precip_mm} humidity={weatherData?.current?.humidity} />
             <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
             <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />

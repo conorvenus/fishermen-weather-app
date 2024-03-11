@@ -60,7 +60,7 @@ function Pin({ location }) {
                             View
                         </button>
                     )}
-                    <button onClick={() => removeLocation(location)} className="bg-red rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
+                    <button onClick={() => removeLocation(location)} className="bg-gray rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
                         <i className="fa-solid fa-trash"></i>
                         Remove
                     </button>

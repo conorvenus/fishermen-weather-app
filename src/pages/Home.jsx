@@ -13,7 +13,7 @@ function Home() {
     const { getSelectedLocation, addLocation, selectLocation } = useLocations()
 
     async function fetchData(loc) {
-        const response = await fetch(`http://api.weatherapi.com/v1/current.json?q=${loc}`, {
+        const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?q=${loc}&days=7`, {
             method: 'GET',
             headers: {
                 'key': key,
@@ -60,11 +60,8 @@ function Home() {
         <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
             <WeatherInfo temperature={weatherData?.current?.temp_c} summary={"Sunny"} location={weatherData?.location} />
             <BigCard wind={weatherData?.current?.wind_kph} rain={weatherData?.current?.precip_mm} humidity={weatherData?.current?.humidity} />
-            <CardList />
-            <BigCard wind={weatherData?.current?.wind_kph} rain={weatherData?.current?.precip_mm} humidity={weatherData?.current?.humidity} />
-            <CardList />
-            <BigCard wind={weatherData?.current?.wind_kph} rain={weatherData?.current?.precip_mm} humidity={weatherData?.current?.humidity} />
-            <CardList />
+            <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
+            <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
         </main>
     </>
   )

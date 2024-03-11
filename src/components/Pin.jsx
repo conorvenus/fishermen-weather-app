@@ -6,7 +6,7 @@ const key = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
 
 function Pin({ location }) {
     const [image, setImage] = useState(null)
-    const { selectLocation } = useLocations()
+    const { selectLocation, removeLocation } = useLocations()
     const navigate = useNavigate()
 
     async function fetchImage() {
@@ -48,17 +48,23 @@ function Pin({ location }) {
                         <p>Next 7 Days</p>
                     </div>
                 </div>
-                {location.selected ? (
-                    <button disabled className="bg-gray rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
-                        <i className="fa-solid fa-eye-slash"></i>
-                        Viewing
+                <div className="flex items-center gap-2">
+                    {location.selected ? (
+                        <button disabled className="bg-gray rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
+                            <i className="fa-solid fa-eye-slash"></i>
+                            Viewing
+                        </button>
+                    ) : (
+                        <button onClick={viewLocation} className="bg-blue rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
+                            <i className="fa-solid fa-eye"></i>
+                            View
+                        </button>
+                    )}
+                    <button onClick={() => removeLocation(location)} className="bg-red rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
+                        <i className="fa-solid fa-trash"></i>
+                        Remove
                     </button>
-                ) : (
-                    <button onClick={viewLocation} className="bg-blue rounded-lg px-2 py-1 shadow-primary font-bold flex items-center gap-2 text-xs">
-                        <i className="fa-solid fa-eye"></i>
-                        View
-                    </button>
-                )}
+                </div>
             </div>
         </div>
     )

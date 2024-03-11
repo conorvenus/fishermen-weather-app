@@ -1,17 +1,31 @@
-import { createContext, useState, useContext } from "react"
+import { createContext, useState, useContext, useEffect } from "react"
+import localforage from "localforage"
 
 const LocationContext = createContext(null)
 
 function LocationProvider({ children }) {
     const [locations, setLocations] = useState([])
 
+    useEffect(() => {
+        localforage.getItem('locations').then(value => {
+            if (value) {
+                setLocations(value)
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        localforage.setItem('locations', locations)
+    }, [locations])
+
     function addLocation(location) {
-        console.log(location)
-        const existing = locations.find(l => l.name === location.name && l.country === location.country)
-        if (existing) {
-            return
-        }
-        setLocations([...locations, location])
+        setLocations(locations => {
+            const existing = locations.find(l => l.name === location.name && l.country === location.country)
+            if (existing) {
+                return locations
+            }
+            return [...locations, location]
+        })
     }
 
     function removeLocation(location) {

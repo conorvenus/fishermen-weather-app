@@ -50,3 +50,7 @@
 .suggestions-dropdown li:hover {
     background-color: #f4f4f4;
 }
+
+svg {
+    @apply w-32;
+}

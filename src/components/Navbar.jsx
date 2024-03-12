@@ -33,7 +33,7 @@ function Navbar() {
                 </NavLink>
             </nav>
         </>
-    );
+    )
 }
 
 export default Navbar

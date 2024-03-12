@@ -56,7 +56,6 @@ function SettingsPage() {
                     </button>
                 </div>
             </div>
-            {}
         </div>
     );
 }

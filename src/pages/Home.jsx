@@ -5,39 +5,45 @@ import GlowCircle from "../components/GlowCircle.jsx";
 import WeatherInfo from "../components/WeatherInfo.jsx";
 import { useLocations } from "../hooks/UseLocations.jsx";
 import { getWeatherIcon } from "../utils.jsx";
+import useOpenWeather from "../hooks/useOpenWeather.js";
 
 const key = "905f1a7f4bc64c91bb1150432240403";
 
 function Home() {
     const [weatherData, setWeatherData] = useState({});
     const [location, setLocation] = useState('');
-    const [suggestions, setSuggestions] = useState([]); // State for suggestions
+    const [suggestions, setSuggestions] = useState([]);
     const { getSelectedLocation, addLocation, selectLocation } = useLocations();
-
-    async function fetchData(loc) {
-        const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?q=${loc}&days=7`, {
-            method: 'GET',
-            headers: {
-                'key': key,
-            }
-        });
-        const data = await response.json();
-        if (response.ok) {
-            setWeatherData(data);
-            const location = {
-                name: data.location.name,
-                country: data.location.country,
-                selected: false
-            };
-            addLocation(location);
-            selectLocation(location);
-        }
-    }
+    const city = 'London'; // example city
+    const { data: openWeatherData, error: weatherError } = useOpenWeather(city);
 
     useEffect(() => {
-        fetchData(getSelectedLocation()?.name ?? "London");
-    }, []);
-  
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?q=${city}&days=7`, {
+                    method: 'GET',
+                    headers: {
+                        'key': key,
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    setWeatherData(data);
+                    const location = {
+                        name: data.location.name,
+                        country: data.location.country,
+                        selected: false
+                    };
+                    addLocation(location);
+                    selectLocation(location);
+                }
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        };
+        fetchData();
+    }, [city]);
+
     function handleSubmit(event) {
         event.preventDefault();
         fetchData(location);
@@ -88,13 +94,20 @@ function Home() {
             </header>
 
         <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
-            <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} />
-            <BigCard wind={weatherData?.current?.wind_kph} rain={weatherData?.current?.precip_mm} humidity={weatherData?.current?.humidity} />
-            <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
-            <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
+            {weatherError && <div>Error fetching weather data: {weatherError}</div>}
+            {!weatherError && Object.keys(weatherData).length > 0 && (
+                <>
+                    <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} />
+                    <BigCard wind={weatherData?.current?.wind_kph} rain={weatherData?.current?.precip_mm} humidity={weatherData?.current?.humidity} data1={'wind'}
+                    data2 = {'Rain'} data3 = {'Humidity'} m1 = {'km/h'} m2 = {'mm'} m3 = {'%'}/>
+                    <BigCard wind={openWeatherData?.main?.pressure} rain={openWeatherData?.main?.pressure} humidity={openWeatherData?.visibility} data1={'Pressure (sea level)'} m1={"Pa"} data2={'Feels like'} m2 = {'Fa'} data3 = {'Visibility'} m3 = {'m'}/>
+                    <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
+                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
+                </>
+            )}
         </main>
     </>
   )
 }
 
-export default Home
+export default Home;

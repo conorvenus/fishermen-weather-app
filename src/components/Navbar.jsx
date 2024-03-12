@@ -23,7 +23,7 @@ function Navbar() {
                     Home
                 </NavLink>
                 {isLocked ? (
-                    <button onClick={handleUnlockClick} className="bg-green rounded-full flex justify-center items-center p-4 shadow-primary z-50 relative"><i className="fa-solid fa-unlock"></i></button>
+                    <button onClick={handleUnlockClick} className="bg-blue rounded-full flex justify-center items-center p-4 shadow-primary z-50 relative"><i className="fa-solid fa-unlock"></i></button>
                 ) : (
                     <button onClick={handleLockClick} className="bg-blue rounded-full flex justify-center items-center p-4 shadow-primary z-50 relative"><i className="fa-solid fa-lock"></i></button>
                 )}

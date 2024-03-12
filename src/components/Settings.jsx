@@ -56,7 +56,7 @@ function SettingsPage() {
                     </button>
                 </div>
             </div>
-            {/* Add other settings as needed */}
+            {}
         </div>
     );
 }

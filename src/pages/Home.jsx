@@ -19,9 +19,11 @@ function Home() {
     const [suggestions, setSuggestions] = useState([]);
     const { getSelectedLocation, addLocation, selectLocation } = useLocations();
     const [openWeatherData, setOpenWeatherData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
     
     async function fetchWeatherAPI(loc) {
+        setIsLoading(true);
         try {
             const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?q=${loc}&days=7`, {
                 method: 'GET',
@@ -44,6 +46,8 @@ function Home() {
             selectLocation(location);
         } catch (error) {
             console.error('Error fetching weather data:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -225,7 +229,7 @@ function Home() {
             <GlowCircle x={0} y={0} opacity={0.15} blur={60} />
 
             <header className="flex w-full h-fit px-8">
-                <form className="flex items-center gap-4 w-full" onSubmit={handleSubmit}>
+                <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
                     <div className="flex items-center gap-4 bg-dark-gray border border-gray rounded-2xl w-full py-2 px-4 shadow-primary relative">
                         <i className="fas fa-search text-light-gray"></i>
                         <input 
@@ -245,16 +249,15 @@ function Home() {
                             </ul>
                         )}
                     </div>
-                    <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary`}>
+                    <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary ${isLoading && 'loading'}`}>
                         <i className="fa-solid fa-arrow-pointer"></i>
                     </button>
                 </form>
             </header>
 
         <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
-
             {weatherData && (
-                <>
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} coordinates={coordinates} />
                     <BigCard 
                         title={"Current"}
@@ -276,7 +279,7 @@ function Home() {
                     <GraphCard title={"Wave Height"} />
                     <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
                     <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
-                </>
+                </div>
             )}
         </main>
     </>

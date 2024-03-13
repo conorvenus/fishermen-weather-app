@@ -85,7 +85,7 @@ function Home() {
             <GlowCircle x={0} y={0} opacity={0.15} blur={60} />
 
             <header className="flex w-full h-fit px-8">
-                <form className="flex items-center gap-4 w-full" onSubmit={handleSubmit}>
+                <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
                     <div className="flex items-center gap-4 bg-dark-gray border border-gray rounded-2xl w-full py-2 px-4 shadow-primary relative">
                         <i className="fas fa-search text-light-gray"></i>
                         <input 

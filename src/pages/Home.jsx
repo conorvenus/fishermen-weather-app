@@ -15,8 +15,10 @@ function Home() {
     const [suggestions, setSuggestions] = useState([]);
     const { getSelectedLocation, addLocation, selectLocation } = useLocations();
     const [openWeatherData, setOpenWeatherData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     
     async function fetchWeatherAPI(loc) {
+        setIsLoading(true);
         try {
             const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?q=${loc}&days=7`, {
                 method: 'GET',
@@ -38,6 +40,8 @@ function Home() {
             selectLocation(location);
         } catch (error) {
             console.error('Error fetching weather data:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -101,7 +105,7 @@ function Home() {
                             </ul>
                         )}
                     </div>
-                    <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary`}>
+                    <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary ${isLoading && 'loading'}`}>
                         <i className="fa-solid fa-arrow-pointer"></i>
                     </button>
                 </form>

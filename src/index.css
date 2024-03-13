@@ -54,3 +54,22 @@
 svg {
     @apply w-32;
 }
+
+/* Sizing */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #17191C;
+  border: 1px solid #31353B;
+  @apply rounded-full;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #30343A;
+  @apply rounded-full;
+}

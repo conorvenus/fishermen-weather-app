@@ -109,7 +109,7 @@ function Home() {
 
         <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
             {weatherData && (
-                <>
+                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} />
                     <BigCard 
                         title={"Current"}
@@ -129,7 +129,7 @@ function Home() {
                     />
                     <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
                     <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
-                </>
+                </div>
             )}
         </main>
     </>

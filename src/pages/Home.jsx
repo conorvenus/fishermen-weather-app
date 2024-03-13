@@ -3,6 +3,7 @@ import BigCard from "../components/BigCard.jsx";
 import CardList from "../components/CardList.jsx";
 import GlowCircle from "../components/GlowCircle.jsx";
 import WeatherInfo from "../components/WeatherInfo.jsx";
+import GraphCard from "../components/GraphCard.jsx";
 import { useLocations } from "../hooks/UseLocations.jsx";
 import { getWeatherIcon } from "../utils.jsx";
 import Chart from "chart.js/auto";
@@ -19,7 +20,6 @@ function Home() {
     const { getSelectedLocation, addLocation, selectLocation } = useLocations();
     const [openWeatherData, setOpenWeatherData] = useState([]);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
-    const chartRef = useRef(null);
     
     async function fetchWeatherAPI(loc) {
         try {
@@ -122,7 +122,7 @@ function Home() {
 
 
     function DrawTidalHeight(tidalData) {
-        const ctx = document.getElementById('tidalHeightGraph').getContext('2d');
+        const ctx = document.getElementById('tidal-times').getContext('2d');
         if (tidalChartRef.current) tidalChartRef.current.destroy();
     
         const labels = tidalData.map(data => data.tideTime);
@@ -178,7 +178,7 @@ function Home() {
     
     
     function DrawWaveHeight(waveHeightData) {
-        const ctx = document.getElementById('waveHeightGraph').getContext('2d');
+        const ctx = document.getElementById('wave-height').getContext('2d');
         if (waveChartRef.current) waveChartRef.current.destroy();
     
         const formattedLabels = waveHeightData.time.map(time => {
@@ -252,16 +252,10 @@ function Home() {
             </header>
 
         <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
-            {coordinates.latitude && coordinates.longitude && (
-                <div className="coordinates-display">
-                    <p>Latitude: {coordinates.latitude}</p>
-                    <p>Longitude: {coordinates.longitude}</p>
-                </div>
-            )}
 
             {weatherData && (
                 <>
-                    <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} />
+                    <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} coordinates={coordinates} />
                     <BigCard 
                         title={"Current"}
                         data={[
@@ -278,11 +272,10 @@ function Home() {
                             { value: openWeatherData?.visibility, unit: 'm', description: 'Visibility' }  
                         ]}
                     />
-                    <canvas id="tidalHeightGraph" width="400" height="200"></canvas>
-                    <canvas id="waveHeightGraph" width="400" height="200"></canvas>
+                    <GraphCard title={"Tidal Times"} />
+                    <GraphCard title={"Wave Height"} />
                     <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
                     <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
-                    
                 </>
             )}
         </main>

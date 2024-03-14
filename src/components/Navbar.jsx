@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import SettingsIcon from './SettingsIcon'
 
 function Navbar() {
     const [isLocked, setIsLocked] = useState(false);
@@ -30,6 +31,10 @@ function Navbar() {
                 <NavLink to="/pins" className={({ isActive }) => `flex flex-col items-center justify-center text-light-gray ${isActive ? "nav-selected" : ""}` }>
                     <i className="fa-solid fa-location-dot"></i>
                     Pins
+                </NavLink>
+                <NavLink to="/settings" className={({ isActive }) => `flex flex-col items-center justify-center text-light-gray ${isActive ? "nav-selected" : ""}` }>
+                    <SettingsIcon />
+                    Settings
                 </NavLink>
             </nav>
         </>

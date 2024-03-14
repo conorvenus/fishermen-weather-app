@@ -7,6 +7,8 @@ import SettingsPage from './components/SettingsPage.jsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { LocationProvider } from './hooks/UseLocations.jsx'
+import { ThemeProvider } from './ThemeContext'
+
 
 const router = createBrowserRouter([
   {
@@ -30,10 +32,12 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+  <ThemeProvider>
   <Router>
     <LocationProvider>
       <RouterProvider router={router} />
     </LocationProvider>
   </Router>
-</React.StrictMode>,
+  </ThemeProvider>
+  </React.StrictMode>,
 )

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import SettingsIcon from './SettingsIcon'
+import { useTheme } from './ThemeContext'; // Import useTheme hook
 
 function Navbar() {
     const [isLocked, setIsLocked] = useState(false);
+    const { theme, toggleTheme } = useTheme(); // Using theme context
 
     function handleLockClick() {
         setIsLocked(true)
@@ -18,7 +20,7 @@ function Navbar() {
             {isLocked && <div className="fixed inset-0 bg-black opacity-50 z-50"></div>} {/* Overlay when locked */}
             <Outlet />
 
-            <nav className="grid grid-cols-3 gap-8 relative">
+            <nav className={`grid grid-cols-3 gap-8 relative ${theme === 'light' ? 'light' : 'dark'}`}> {/* Apply theme class */}
                 <NavLink to="/" className={({ isActive }) => `flex flex-col items-center justify-center text-light-gray ${isActive ? "nav-selected" : ""}` }>
                     <i className="fa-solid fa-home"></i>
                     Home
@@ -36,6 +38,9 @@ function Navbar() {
                     <SettingsIcon />
                     Settings
                 </NavLink>
+                <button onClick={toggleTheme} className="text-white bg-blue rounded-full flex justify-center items-center p-4 shadow-primary z-50 relative">
+                    {theme === 'light' ? 'Switch to Dark' : 'Switch to Light'}
+                </button>
             </nav>
         </>
     )

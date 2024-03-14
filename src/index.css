@@ -105,3 +105,24 @@ svg {
         opacity: 0;
     }
 }
+
+
+/* Light Theme */
+.light {
+    --background-color: #FFFFFF;
+    --text-color: #000000;
+    --accent-color: #3498db;
+}
+
+/* Dark Theme */
+.dark {
+    --background-color: #2C3E50;
+    --text-color: #FFFFFF;
+    --accent-color: #f39c12;
+}
+
+/* Apply common styles */
+.light, .dark {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

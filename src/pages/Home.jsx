@@ -256,6 +256,9 @@ function Home() {
 
             <header className="flex w-full h-fit px-8">
                 <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
+                    <button onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
+                        <i className="fas fa-map-marker-alt"></i>
+                    </button>
                     <div className="flex items-center gap-4 bg-dark-gray border border-gray rounded-2xl w-full py-2 px-4 shadow-primary relative">
                         <i className="fas fa-search text-light-gray"></i>
                         <input 
@@ -277,9 +280,6 @@ function Home() {
                     </div>
                     <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary ${isLoading && 'loading'}`}>
                         <i className="fa-solid fa-arrow-pointer"></i>
-                    </button>
-                    <button onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
-                        <i className="fas fa-sync-alt"></i>
                     </button>
                 </form>
             </header>

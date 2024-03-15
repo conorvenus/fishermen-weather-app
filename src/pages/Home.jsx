@@ -4,14 +4,13 @@ import CardList from "../components/CardList.jsx";
 import GlowCircle from "../components/GlowCircle.jsx";
 import WeatherInfo from "../components/WeatherInfo.jsx";
 import GraphCard from "../components/GraphCard.jsx";
+import Chart from "chart.js/auto";
 import { useLocations } from "../hooks/UseLocations.jsx";
 import { getWeatherIcon } from "../utils.jsx";
-import Chart from "chart.js/auto";
 
 const WEATHER_API_KEY = "905f1a7f4bc64c91bb1150432240403";
 const OPEN_WEATHER_API_KEY = 'c71e8f930b674cc9033f4f2b9d9b7f36';
 const WORLD_WEATHER_API_KEY = '5d566da289364451abf110654241303'; 
-
 
 function Home() {
     const [weatherData, setWeatherData] = useState({});
@@ -51,9 +50,9 @@ function Home() {
         }
     };
 
-    async function fetchOpenWeatherMap(loc) {
+    async function fetchOpenWeatherMap(loc, latitude, longitude) {
         try {
-            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${loc}&appid=${OPEN_WEATHER_API_KEY}&units=metric`);
+            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=metric`);
             if (!response.ok) {
                 throw new Error('Weather data fetching failed');
             }
@@ -65,8 +64,18 @@ function Home() {
     }
 
     useEffect(() => {
-        fetchWeatherAPI(getSelectedLocation()?.name ?? "London");
-        fetchOpenWeatherMap(getSelectedLocation()?.name ?? "London");
+        navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            setCoordinates({ latitude, longitude });
+            fetchWeatherAPI(`${latitude},${longitude}`);
+            fetchOpenWeatherMap('London', latitude, longitude);
+        }, 
+        (error) => {
+            console.error('Error getting geolocation:', error);
+            // Fallback default location if geolocation fails
+            fetchWeatherAPI(getSelectedLocation()?.name ?? "London");
+            fetchOpenWeatherMap(getSelectedLocation()?.name ?? "London");
+        });
     }, []);
 
     function handleSubmit(event) {
@@ -94,6 +103,23 @@ function Home() {
             fetchWaveHeightData();
         }
     }, [coordinates]);
+
+    async function refreshWeatherData() {
+        setIsLoading(true);
+        try {
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
+            const { latitude, longitude } = position.coords;
+            setCoordinates({ latitude, longitude });
+            fetchWeatherAPI(`${latitude},${longitude}`);
+            fetchOpenWeatherMap(latitude, longitude);
+        } catch (error) {
+            console.error('Error refreshing weather data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
 
     //Tidal Time Graph
@@ -251,6 +277,9 @@ function Home() {
                     </div>
                     <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary ${isLoading && 'loading'}`}>
                         <i className="fa-solid fa-arrow-pointer"></i>
+                    </button>
+                    <button onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
+                        <i className="fas fa-sync-alt"></i>
                     </button>
                 </form>
             </header>

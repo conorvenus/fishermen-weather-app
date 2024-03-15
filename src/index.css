@@ -54,3 +54,54 @@
 svg {
     @apply w-32;
 }
+
+/* Sizing */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #17191C;
+  border: 1px solid #31353B;
+  @apply rounded-full;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #30343A;
+  @apply rounded-full;
+}
+
+.pulsing-btn {
+    position: relative;
+    transition: background-color 0.3s ease;
+    z-index: 5;
+}
+
+.pulsing-btn.loading {
+    @apply bg-dark-gray border border-gray;
+    pointer-events: none;
+}
+
+.pulsing-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    @apply bg-dark-gray rounded-full opacity-40;
+    animation: pulsing 2s infinite;
+    z-index: 1;
+}
+
+@keyframes pulsing {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}

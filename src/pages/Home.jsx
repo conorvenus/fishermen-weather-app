@@ -64,18 +64,25 @@ function Home() {
     }
 
     useEffect(() => {
-        navigator.geolocation.getCurrentPosition((position) => {
-            const { latitude, longitude } = position.coords;
-            setCoordinates({ latitude, longitude });
-            fetchWeatherAPI(`${latitude},${longitude}`);
-            fetchOpenWeatherMap('London', latitude, longitude);
-        }, 
-        (error) => {
-            console.error('Error getting geolocation:', error);
-            // Fallback default location if geolocation fails
-            fetchWeatherAPI(getSelectedLocation()?.name ?? "London");
-            fetchOpenWeatherMap(getSelectedLocation()?.name ?? "London");
-        });
+        const selectedLocation = getSelectedLocation();
+        if (selectedLocation) {
+            fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`);
+            fetchOpenWeatherMap(selectedLocation.latitude, selectedLocation.longitude);
+        } else {
+            // Fetch live location
+            navigator.geolocation.getCurrentPosition((position) => {
+                const { latitude, longitude } = position.coords;
+                setCoordinates({ latitude, longitude });
+                fetchWeatherAPI(`${latitude},${longitude}`);
+                fetchOpenWeatherMap(latitude, longitude);
+            }, 
+            (error) => {
+                console.error('Error getting geolocation:', error);
+                // default location if geolocation fails
+                fetchWeatherAPI(getSelectedLocation()?.name ?? "London");
+                fetchOpenWeatherMap(getSelectedLocation()?.name ?? "London");
+            });
+        }
     }, []);
 
     function handleSubmit(event) {

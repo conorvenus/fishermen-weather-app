@@ -7,6 +7,8 @@ import GraphCard from "../components/GraphCard.jsx";
 import Chart from "chart.js/auto";
 import { useLocations } from "../hooks/UseLocations.jsx";
 import { getWeatherIcon } from "../utils.jsx";
+import WaveHeightsGraphCard from "../components/WaveHeightsGraphCard.jsx";
+import TidalGraphCard from "../components/TidalGraphCard.jsx";
 
 const WEATHER_API_KEY = "905f1a7f4bc64c91bb1150432240403";
 const OPEN_WEATHER_API_KEY = 'c71e8f930b674cc9033f4f2b9d9b7f36';
@@ -20,6 +22,8 @@ function Home() {
     const [openWeatherData, setOpenWeatherData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
+    const [tidalData, setTidalData] = useState([]);
+    const [waveHeightData, setWaveHeightData] = useState([]);
     
     async function fetchWeatherAPI(loc) {
         setIsLoading(true);
@@ -102,8 +106,6 @@ function Home() {
         setSuggestions([]);
     }
 
-    const tidalChartRef = useRef(null);
-    const waveChartRef = useRef(null);
     useEffect(() => {
         if (coordinates.latitude != null && coordinates.longitude != null) {
             fetchTidalData();
@@ -129,134 +131,136 @@ function Home() {
     }
 
 
-    //Tidal Time Graph
-    async function fetchTidalData() {
+    //fecthing tidal data
+    // async function fetchTidalData() {
+    //     if (coordinates.latitude == null || coordinates.longitude == null) return [];
+      
+    //     try {
+    //       const response = await fetch(`https://api.worldweatheronline.com/premium/v1/marine.ashx?key=${WORLD_WEATHER_API_KEY}&q=${coordinates.latitude},${coordinates.longitude}&format=json&tp=1&tides=yes`);
+    //       if (!response.ok) {
+    //         throw new Error('Failed to fetch tidal data');
+    //       }
+    //       const data = await response.json();
+          
+    //       const tidalData = data.data.weather.map(day => ({
+    //         date: day.date,
+    //         tideDetails: day?.tides?.[0]?.tide_data?.map(tideEvent => ({
+    //           tideTime: tideEvent?.tideTime,
+    //           tideHeight_mt: tideEvent?.tideHeight_mt,
+    //           tideType: tideEvent?.tide_type // Assuming the API response includes a tideType
+    //         })) ?? [], // Fallback to an empty array if any of the properties is undefined
+    //       }));
+      
+    //       return tidalData;
+    //     } catch (error) {
+    //       console.error('Error fetching tidal data:', error);
+    //       return [];
+    //     }
+    // }
 
-        //if there is something wrong with lat and long
-        if (coordinates.latitude == null || coordinates.longitude == null) return;
+    async function fetchTidalData() {
+        if (coordinates.latitude == null || coordinates.longitude == null) return [];
+    
         try {
-            const response = await fetch(`https://api.worldweatheronline.com/premium/v1/marine.ashx?key=${WORLD_WEATHER_API_KEY}&q=${coordinates.latitude},${coordinates.longitude}&format=json&tide=yes`);
+            console.log("Fetching tidal data...");
+            const response = await fetch(`https://api.worldweatheronline.com/premium/v1/marine.ashx?key=${WORLD_WEATHER_API_KEY}&q=${coordinates.latitude},${coordinates.longitude}&format=json&tp=1&tides=yes`);
             if (!response.ok) {
                 throw new Error('Failed to fetch tidal data');
             }
             const data = await response.json();
-
-            const tidalData = data.data.weather[0].tides[0].tide_data.map(tide => ({
-                tideTime: tide.tideTime,
-                tideHeight_mt: tide.tideHeight_mt,
-                tide_type: tide.tide_type 
+    
+            const tidalData = data.data.weather.map(day => ({
+                date: day.date,
+                tideDetails: day?.tides?.[0]?.tide_data?.map(tideEvent => ({
+                    tideTime: tideEvent?.tideTime,
+                    tideHeight_mt: tideEvent?.tideHeight_mt,
+                    tideType: tideEvent?.tide_type // Assuming the API response includes a tideType
+                })) ?? [], // Fallback to an empty array if any of the properties is undefined
             }));
-
-            DrawTidalHeight(tidalData);
+    
+            console.log("Tidal data fetched successfully:", tidalData);
+            return tidalData;
         } catch (error) {
             console.error('Error fetching tidal data:', error);
+            return [];
         }
     }
-
-    useEffect(() => {
-        fetchTidalData();
-    }, []);
-
-
-    function DrawTidalHeight(tidalData) {
-        const ctx = document.getElementById('tidal-times').getContext('2d');
-        if (tidalChartRef.current) tidalChartRef.current.destroy();
     
-        const labels = tidalData.map(data => data.tideTime);
-        const dataPoints = tidalData.map(data => data.tideHeight_mt);
     
-        tidalChartRef.current = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Tidal Height (m)',
-                    data: dataPoints,
-                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }
-    
-    // Wave Graph
+    // fetching wave height data
     async function fetchWaveHeightData() {
-        //if there is something wrong with lat and long
-        if (coordinates.latitude == null || coordinates.longitude == null) return;
+        if (coordinates.latitude == null || coordinates.longitude == null) {
+            return;//error checkuing
+        }
+        
         try {
-            const response = await fetch(`https://api.worldweatheronline.com/premium/v1/marine.ashx?key=${WORLD_WEATHER_API_KEY}&q=${coordinates.latitude},${coordinates.longitude}&format=json`);
+            const response = await fetch(`https://api.worldweatheronline.com/premium/v1/marine.ashx?key=${WORLD_WEATHER_API_KEY}&q=${coordinates.latitude},${coordinates.longitude}&format=json&tp=1&tide=yes`);
             if (!response.ok) {
                 throw new Error('Failed to fetch wave height data');
             }
+            
             const data = await response.json();
-    
-            const waveHeightData = {
-                time: data.data.weather[0].hourly.map(hour => new Date(data.data.weather[0].date + 'T' + hour.time.slice(0, 2) + ':' + hour.time.slice(2) + ':00Z')),
-                waveHeight: data.data.weather[0].hourly.map(hour => hour.sigHeight_m),
-            };
-    
-            DrawWaveHeight(waveHeightData);
-        } catch (error) {
-            console.error('Error fetching wave height data:', error);
-        }
-    }    
-    
-    useEffect(() => {
-        fetchWaveHeightData();
-    }, []);
-    
-    
-    function DrawWaveHeight(waveHeightData) {
-        const ctx = document.getElementById('wave-height').getContext('2d');
-        if (waveChartRef.current) waveChartRef.current.destroy();
-    
-        const formattedLabels = waveHeightData.time.map(time => {
-            const hours = time.getUTCHours();
-            const suffix = hours >= 12 ? 'PM' : 'AM';
-            const formattedHours = hours % 12 || 12;
-            return `${formattedHours} ${suffix}`;
-        });
-    
-        waveChartRef.current = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: formattedLabels,
-                datasets: [{
-                    label: 'Wave Height (m)',
-                    data: waveHeightData.waveHeight,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Wave Height (m)'
-                        },
-                        beginAtZero: true
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Time'
-                        }
-                    }
-                }
-            }
-        });
-    }
 
+            // Extract the wave height data from the response
+            const waveHeightData = data.data.weather.map(day => ({
+                date: day.date,
+                hourlyData: day.hourly.map(hour => ({
+                    time: hour.time,
+                    waveHeight: hour.sigHeight_m,
+                })),
+            }));
+    
+            return waveHeightData; // We return this to draw it later
+        } 
+        catch (error) {
+            console.error('Error fetching wave height data:', error);
+            return []; // Return empty array on error
+        }
+    }
+    
+    // calls the fetch if lat and long are not null and then sets the wave height data
+    useEffect(() => {
+        async function fetchDataAndDrawCharts() {
+            setTidalData(await fetchTidalData()); // Set the tidal data here
+            setWaveHeightData(await fetchWaveHeightData()); // Set the wave height data here
+        }
+    
+        if (coordinates.latitude && coordinates.longitude) {
+            fetchDataAndDrawCharts();
+        }
+    }, [coordinates]);
+      
+
+
+    // function DrawTidalHeight(tidalData) {
+    //     const ctx = document.getElementById('tidal-times').getContext('2d');
+    //     if (tidalChartRef.current) tidalChartRef.current.destroy();
+    
+    //     const labels = tidalData.map(data => data.tideTime);
+    //     const dataPoints = tidalData.map(data => data.tideHeight_mt);
+    
+    //     tidalChartRef.current = new Chart(ctx, {
+    //         type: 'line',
+    //         data: {
+    //             labels: labels,
+    //             datasets: [{
+    //                 label: 'Tidal Height (m)',
+    //                 data: dataPoints,
+    //                 backgroundColor: 'rgba(255, 159, 64, 0.2)',
+    //                 borderColor: 'rgba(255, 159, 64, 1)',
+    //                 borderWidth: 1
+    //             }]
+    //         },
+    //         options: {
+    //             scales: {
+    //                 y: {
+    //                     beginAtZero: true
+    //                 }
+    //             }
+    //         }
+    //     });
+    // }
+    
     return (
         <>
             <GlowCircle x={0} y={0} opacity={0.15} blur={60} />
@@ -311,8 +315,8 @@ function Home() {
                             { value: openWeatherData?.visibility, unit: 'm', description: 'Visibility' }  
                         ]}
                     />
-                    <GraphCard title={"Tidal Times"} />
-                    <GraphCard title={"Wave Height"} />
+                    <TidalGraphCard title="Tidal Times Over the Week" tidalData={tidalData} />
+                    <WaveHeightsGraphCard title="Wave Height Over Time" waveHeightData={waveHeightData} />
                     <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
                     <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
                 </div>

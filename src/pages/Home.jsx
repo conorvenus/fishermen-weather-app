@@ -50,7 +50,7 @@ function Home() {
         }
     };
 
-    async function fetchOpenWeatherMap(loc, latitude, longitude) {
+    async function fetchOpenWeatherMap(latitude, longitude) {
         try {
             const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=metric`);
             if (!response.ok) {

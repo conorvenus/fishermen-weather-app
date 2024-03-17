@@ -20,6 +20,7 @@ function Home() {
     const [openWeatherData, setOpenWeatherData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
+    const [next24Hours, setNext24Hours] = useState([]);
     
     async function fetchWeatherAPI(loc) {
         setIsLoading(true);
@@ -49,6 +50,29 @@ function Home() {
             setIsLoading(false);
         }
     };
+
+    // Function to calculate and set the next 24 hours of forecast data
+    const calculateAndsetNext24HoursForecast = () => {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const todayHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[0]?.hour) 
+                                    ? weatherData.forecast.forecastday[0].hour : [];
+        const tomorrowHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[1]?.hour) 
+                                       ? weatherData.forecast.forecastday[1].hour : [];
+        const hourlyForecasts = [...todayHourlyForecast, ...tomorrowHourlyForecast];
+        const indexOfCurrentHour = hourlyForecasts.findIndex(hour => new Date(hour.time).getHours() === currentHour);
+        const next24Hours = hourlyForecasts.slice(indexOfCurrentHour, Math.min(indexOfCurrentHour + 24, hourlyForecasts.length));
+
+        setNext24Hours(next24Hours);
+    };
+
+    // Use an effect hook to call calculateAndSetNext24HoursForecast when weatherData updates
+    useEffect(() => {
+        if (weatherData?.forecast?.forecastday) {
+            calculateAndsetNext24HoursForecast();
+        }
+    }, [weatherData]);                         
+    
 
     async function fetchOpenWeatherMap(latitude, longitude) {
         try {
@@ -313,8 +337,8 @@ function Home() {
                     />
                     <GraphCard title={"Tidal Times"} />
                     <GraphCard title={"Wave Height"} />
-                    <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
-                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
+                    <CardList title={"Hourly"} data={next24Hours} />
+                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday.map(day => ({...day, date: new Date(day.date).toLocaleDateString('en-US', { weekday: 'long' })}))} />
                 </div>
             )}
         </main>

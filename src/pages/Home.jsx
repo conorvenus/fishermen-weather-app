@@ -20,7 +20,8 @@ function Home() {
     const [openWeatherData, setOpenWeatherData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
-    
+    const [next24Hours, setNext24Hours] = useState([]);
+
     async function fetchWeatherAPI(loc) {
         setIsLoading(true);
         try {
@@ -50,7 +51,30 @@ function Home() {
         }
     };
 
-    async function fetchOpenWeatherMap(latitude, longitude) {
+    
+    // Function to calculate and set the next 24 hours of forecast data
+    const calculateAndsetNext24HoursForecast = () => {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const todayHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[0]?.hour) 
+                                    ? weatherData.forecast.forecastday[0].hour : [];
+        const tomorrowHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[1]?.hour) 
+                                       ? weatherData.forecast.forecastday[1].hour : [];
+        const hourlyForecasts = [...todayHourlyForecast, ...tomorrowHourlyForecast];
+        const indexOfCurrentHour = hourlyForecasts.findIndex(hour => new Date(hour.time).getHours() === currentHour);
+        const next24Hours = hourlyForecasts.slice(indexOfCurrentHour, Math.min(indexOfCurrentHour + 24, hourlyForecasts.length));
+
+        setNext24Hours(next24Hours);
+    };
+
+    // Use an effect hook to call calculateAndSetNext24HoursForecast when weatherData updates
+    useEffect(() => {
+        if (weatherData?.forecast?.forecastday) {
+            calculateAndsetNext24HoursForecast();
+        }
+    }, [weatherData]);
+
+    async function fetchOpenWeatherMap(loc, latitude, longitude) {
         try {
             const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPEN_WEATHER_API_KEY}&units=metric`);
             if (!response.ok) {
@@ -64,25 +88,18 @@ function Home() {
     }
 
     useEffect(() => {
-        const selectedLocation = getSelectedLocation();
-        if (selectedLocation) {
-            fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`);
-            fetchOpenWeatherMap(selectedLocation.latitude, selectedLocation.longitude);
-        } else {
-            // Fetch live location
-            navigator.geolocation.getCurrentPosition((position) => {
-                const { latitude, longitude } = position.coords;
-                setCoordinates({ latitude, longitude });
-                fetchWeatherAPI(`${latitude},${longitude}`);
-                fetchOpenWeatherMap(latitude, longitude);
-            }, 
-            (error) => {
-                console.error('Error getting geolocation:', error);
-                // default location if geolocation fails
-                fetchWeatherAPI(getSelectedLocation()?.name ?? "London");
-                fetchOpenWeatherMap(getSelectedLocation()?.name ?? "London");
-            });
-        }
+        navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            setCoordinates({ latitude, longitude });
+            fetchWeatherAPI(`${latitude},${longitude}`);
+            fetchOpenWeatherMap('London', latitude, longitude);
+        }, 
+        (error) => {
+            console.error('Error getting geolocation:', error);
+            // Fallback default location if geolocation fails
+            fetchWeatherAPI(getSelectedLocation()?.name ?? "London");
+            fetchOpenWeatherMap(getSelectedLocation()?.name ?? "London");
+        });
     }, []);
 
     function handleSubmit(event) {
@@ -263,9 +280,6 @@ function Home() {
 
             <header className="flex w-full h-fit px-8">
                 <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
-                    <button onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
-                        <i className="fas fa-map-marker-alt"></i>
-                    </button>
                     <div className="flex items-center gap-4 bg-dark-gray border border-gray rounded-2xl w-full py-2 px-4 shadow-primary relative">
                         <i className="fas fa-search text-light-gray"></i>
                         <input 
@@ -287,6 +301,9 @@ function Home() {
                     </div>
                     <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary ${isLoading && 'loading'}`}>
                         <i className="fa-solid fa-arrow-pointer"></i>
+                    </button>
+                    <button onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
+                        <i className="fas fa-sync-alt"></i>
                     </button>
                 </form>
             </header>
@@ -313,8 +330,8 @@ function Home() {
                     />
                     <GraphCard title={"Tidal Times"} />
                     <GraphCard title={"Wave Height"} />
-                    <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
-                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
+                    <CardList title={"Hourly"} data={next24Hours} />
+                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday.map(day => ({...day, date: new Date(day.date).toLocaleDateString('en-US', { weekday: 'long' })}))} />
                 </div>
             )}
         </main>

@@ -109,6 +109,23 @@ function Home() {
         setSuggestions([]);
     }
 
+    useEffect(() => {
+        if (weatherData.forecast && weatherData.forecast.forecastday && weatherData.forecast.forecastday.length > 0) {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const todayHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[0]?.hour) 
+                                        ? weatherData.forecast.forecastday[0].hour : [];
+            const tomorrowHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[1]?.hour) 
+                                           ? weatherData.forecast.forecastday[1].hour : [];
+            const hourlyForecasts = [...todayHourlyForecast, ...tomorrowHourlyForecast];
+            const indexOfCurrentHour = hourlyForecasts.findIndex(hour => new Date(hour.time).getHours() === currentHour);
+            const next24Hours = hourlyForecasts.slice(indexOfCurrentHour, Math.min(indexOfCurrentHour + 24, hourlyForecasts.length));
+
+            setHourlyWeather(next24Hours);
+        }
+    }, [weatherData]);
+    
+
     async function refreshWeatherData() {
         setIsLoading(true);
         try {
@@ -128,22 +145,7 @@ function Home() {
         }
     }
 
-    useEffect(() => {
-        if (weatherData.forecast && weatherData.forecast.forecastday && weatherData.forecast.forecastday.length > 0) {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const todayHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[0]?.hour) 
-                                        ? weatherData.forecast.forecastday[0].hour : [];
-            const tomorrowHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[1]?.hour) 
-                                           ? weatherData.forecast.forecastday[1].hour : [];
-            const hourlyForecasts = [...todayHourlyForecast, ...tomorrowHourlyForecast];
-            const indexOfCurrentHour = hourlyForecasts.findIndex(hour => new Date(hour.time).getHours() === currentHour);
-            const next24Hours = hourlyForecasts.slice(indexOfCurrentHour, Math.min(indexOfCurrentHour + 24, hourlyForecasts.length));
 
-            setHourlyWeather(next24Hours);
-        }
-    }, [weatherData]);
-    
     
 
     return (

@@ -34,7 +34,6 @@ const WeatherGraphs = ({ coordinates }) => {
                 tideHeight_mt: tide.tideHeight_mt,
                 tide_type: tide.tide_type 
             }));
-            console.log(tidalData);
 
             DrawTidalHeight(tidalData);
         } catch (error) {
@@ -51,12 +50,8 @@ const WeatherGraphs = ({ coordinates }) => {
     
         // Create gradient
         const tidalGradient = ctx.createLinearGradient(0, 0, 0, 350);
-        tidalGradient.addColorStop(0, 'rgba(255, 159, 64, 0.5)'); // Full color at the top
-        tidalGradient.addColorStop(0.3, 'rgba(255, 159, 64, 0.4)'); // Even more transparent
-        tidalGradient.addColorStop(0.5, 'rgba(255, 159, 64, 0.4)'); // Barely visible
-        tidalGradient.addColorStop(0.6, 'rgba(255, 159, 64, 0.3)'); // Barely visible
-        tidalGradient.addColorStop(0.9, 'rgba(255, 159, 64, 0.1)'); // Barely visible
-        tidalGradient.addColorStop(1, 'rgba(255, 159, 64, 0)'); // Fully transparent at the bottom
+        tidalGradient.addColorStop(0, 'rgba(98, 60, 234, 0.5)'); // Full color at the top
+        tidalGradient.addColorStop(1, 'rgba(98, 60, 234, 0)'); // Fully transparent at the bottom
 
         tidalChartRef.current = new Chart(ctx, {
             type: 'line',
@@ -66,7 +61,7 @@ const WeatherGraphs = ({ coordinates }) => {
                     label: 'Tidal Height (m)',
                     data: dataPoints,
                     backgroundColor: tidalGradient, // Use the gradient for the fill color
-                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderColor: 'rgba(98, 60, 234, 1)',
                     borderWidth: 2,
                     fill: true, 
                 }]
@@ -108,12 +103,9 @@ const WeatherGraphs = ({ coordinates }) => {
         const ctx = document.getElementById('wave-height').getContext('2d');
         if (waveChartRef.current) waveChartRef.current.destroy();
     
-
         // Create gradient
         const waveHeightGradient = ctx.createLinearGradient(0, 0, 0, 350);
-        waveHeightGradient.addColorStop(0, 'rgba(54, 162, 235, 0.6)'); // Full color at the top
-        waveHeightGradient.addColorStop(0.4, 'rgba(54, 162, 235, 0.4)'); // Even more transparent
-        waveHeightGradient.addColorStop(0.6, 'rgba(54, 162, 235, 0.2)'); // Barely visible
+        waveHeightGradient.addColorStop(0, 'rgba(54, 162, 235, 0.5)'); // Full color at the top
         waveHeightGradient.addColorStop(1, 'rgba(54, 162, 235, 0)'); // Fully transparent at the bottom
 
         const formattedLabels = waveHeightData.time.map(time => {
@@ -132,7 +124,8 @@ const WeatherGraphs = ({ coordinates }) => {
                     data: waveHeightData.waveHeight,
                     backgroundColor: waveHeightGradient,
                     borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    fill: true
                 }]
             },
             options: {

@@ -44,6 +44,7 @@ function Home() {
             };
             addLocation(location);
             selectLocation(location);
+            return { latitude: data.location.lat, longitude: data.location.lon };
         } catch (error) {
             console.error('Error fetching weather data:', error);
         } finally {
@@ -90,8 +91,9 @@ function Home() {
     useEffect(() => {
         const selectedLocation = getSelectedLocation();
         if (selectedLocation) {
-            fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`);
-            fetchOpenWeatherMap(selectedLocation.latitude, selectedLocation.longitude);
+            fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`).then(coords => {
+                fetchOpenWeatherMap(coords.latitude, coords.longitude);
+            })
         } else {
             // Fetch live location
             navigator.geolocation.getCurrentPosition((position) => {
@@ -111,11 +113,13 @@ function Home() {
 
     function handleSubmit(event) {
         event.preventDefault();
-        fetchWeatherAPI(location);
-        fetchOpenWeatherMap(location);
+        fetchWeatherAPI(location).then(coords => {
+            fetchOpenWeatherMap(coords.latitude, coords.longitude);
+        })
     }
 
     async function fetchLocationSuggestions(query) {
+        if (query.length < 3) return setSuggestions([]);
         const response = await fetch(`https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${query}`);
         const data = await response.json();
         setSuggestions(data.map(item => item.name));

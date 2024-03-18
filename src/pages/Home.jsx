@@ -43,6 +43,7 @@ function Home() {
             };
             addLocation(location);
             selectLocation(location);
+            return { latitude: data.location.lat, longitude: data.location.lon };
         } catch (error) {
             console.error('Error fetching weather data:', error);
         } finally {
@@ -66,8 +67,9 @@ function Home() {
     useEffect(() => {
         const selectedLocation = getSelectedLocation();
         if (selectedLocation) {
-            fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`);
-            fetchOpenWeatherMap(selectedLocation.latitude, selectedLocation.longitude);
+            fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`).then(coords => {
+                fetchOpenWeatherMap(coords.latitude, coords.longitude);
+            })
         } else {
             // Fetch live location
             navigator.geolocation.getCurrentPosition((position) => {

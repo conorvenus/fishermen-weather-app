@@ -146,13 +146,17 @@ function Home() {
             }
             const data = await response.json();
 
-            const tidalData = data.data.weather[0].tides[0].tide_data.map(tide => ({
-                tideTime: tide.tideTime,
-                tideHeight_mt: tide.tideHeight_mt,
-                tide_type: tide.tide_type 
-            }));
+            if (!data.data.error) {
+                const tidalData = data.data.weather[0].tides[0].tide_data.map(tide => ({
+                    tideTime: tide.tideTime,
+                    tideHeight_mt: tide.tideHeight_mt,
+                    tide_type: tide.tide_type 
+                }));
 
-            DrawTidalHeight(tidalData);
+                DrawTidalHeight(tidalData);
+            } else {
+                DrawTidalHeight([]);
+            }
         } catch (error) {
             console.error('Error fetching tidal data:', error);
         }
@@ -183,6 +187,7 @@ function Home() {
                 }]
             },
             options: {
+                tension: 0.4,
                 scales: {
                     y: {
                         beginAtZero: true
@@ -203,12 +208,16 @@ function Home() {
             }
             const data = await response.json();
     
-            const waveHeightData = {
-                time: data.data.weather[0].hourly.map(hour => new Date(data.data.weather[0].date + 'T' + hour.time.slice(0, 2) + ':' + hour.time.slice(2) + ':00Z')),
-                waveHeight: data.data.weather[0].hourly.map(hour => hour.sigHeight_m),
-            };
-    
-            DrawWaveHeight(waveHeightData);
+            if (!data.data.error) {
+                const waveHeightData = {
+                    time: data.data.weather[0].hourly.map(hour => new Date(data.data.weather[0].date + 'T' + hour.time.slice(0, 2) + ':' + hour.time.slice(2) + ':00Z')),
+                    waveHeight: data.data.weather[0].hourly.map(hour => hour.sigHeight_m),
+                };
+        
+                DrawWaveHeight(waveHeightData);
+            } else {
+                DrawWaveHeight({ time: [], waveHeight: [] });
+            }
         } catch (error) {
             console.error('Error fetching wave height data:', error);
         }
@@ -243,6 +252,7 @@ function Home() {
                 }]
             },
             options: {
+                tension: 0.4,
                 scales: {
                     y: {
                         title: {

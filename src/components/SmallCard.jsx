@@ -7,7 +7,7 @@ function SmallCard({ data }) {
                 <>
                     {getWeatherIcon(data?.day?.condition?.code)}
                     <h1 className="text-white font-medium">{data?.date}</h1>
-                    <h2 className="text-light-gray">{data?.day?.avgtemp_c} &deg;</h2>
+                    <h2 className="text-light-gray">{data?.day?.avgtemp_c}&deg;</h2>
                 </>
             ) : (
                 <>

@@ -7,6 +7,7 @@ import GraphCard from "../components/GraphCard.jsx";
 import Chart from "chart.js/auto";
 import { useLocations } from "../hooks/UseLocations.jsx";
 import { getWeatherIcon } from "../utils.jsx";
+import localforage from "localforage";
 
 const WEATHER_API_KEY = "905f1a7f4bc64c91bb1150432240403";
 const OPEN_WEATHER_API_KEY = 'c71e8f930b674cc9033f4f2b9d9b7f36';
@@ -20,10 +21,36 @@ function Home() {
     const [openWeatherData, setOpenWeatherData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [lastUpdated, setLastUpdated] = useState('');
+
+    useEffect(() => {
+        const goOnline = () => setIsOnline(true);
+        const goOffline = () => setIsOnline(false);
+
+        window.addEventListener('online', goOnline);
+        window.addEventListener('offline', goOffline);
+
+        return () => {
+            window.removeEventListener('online', goOnline);
+            window.removeEventListener('offline', goOffline);
+        };
+    }, []);
     
     async function fetchWeatherAPI(loc) {
         setIsLoading(true);
+        const cacheKey = `weather-${loc}`;
         try {
+            // try loadin data from local storage
+            const cachedData = await localforage.getItem(cacheKey);
+            if (cachedData) {
+                setWeatherData(cachedData.weatherData);
+                setCoordinates(cachedData.coordinates);
+                setLastUpdated(new Date().toLocaleString());
+                return cachedData.coordinates;
+            }
+    
+            // If no cache is found, fetch from the API
             const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?q=${loc}&days=7`, {
                 method: 'GET',
                 headers: {
@@ -34,6 +61,10 @@ function Home() {
             if (!response.ok) {
                 throw new Error('Weather data fetching failed');
             }
+    
+            // cache the fetched data
+            await localforage.setItem(cacheKey, { weatherData: data, coordinates: { latitude: data.location.lat, longitude: data.location.lon } });
+    
             setWeatherData(data);
             setCoordinates({ latitude: data.location.lat, longitude: data.location.lon });
             const location = {
@@ -59,9 +90,10 @@ function Home() {
             }
             const data = await response.json();
             setOpenWeatherData(data);
+            setLastUpdated(new Date().toLocaleString()); // update last updated time
         } catch (err) {
             console.error('Error fetching weather data:', err);
-        } 
+        }
     }
 
     useEffect(() => {
@@ -274,8 +306,20 @@ function Home() {
 
     return (
         <>
+            {!isOnline && (
+                <div style={{backgroundColor: '#FFD700', color: '#FFFFFF', padding: '10px', textAlign: 'center'}}>
+                    You are currently offline. Data shown may not be up-to-date.
+                </div>
+            )}
+    
+            {lastUpdated && (
+                <div style={{textAlign: 'right', marginRight: '16px', marginTop: '2px', fontSize: '12px'}}>
+                    Last Updated: {lastUpdated}
+                </div>
+            )}
+    
             <GlowCircle x={0} y={0} opacity={0.15} blur={60} />
-
+    
             <header className="flex w-full h-fit px-8">
                 <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
                     <button type="button" onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
@@ -305,35 +349,35 @@ function Home() {
                     </button>
                 </form>
             </header>
-
-        <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
-            {weatherData && (
-                <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} coordinates={coordinates} />
-                    <BigCard 
-                        title={"Current"}
-                        data={[
-                            { value: weatherData?.current?.wind_kph, unit: 'km/h', description: 'Wind' },
-                            { value: weatherData?.current?.precip_mm, unit: 'mm', description: 'Rain' },
-                            { value: weatherData?.current?.humidity, unit: '%', description: 'Humidity' }
-                        ]}
-                     />
-                    <BigCard 
-                        title={"Marine"}
-                        data={[
-                            { value: openWeatherData?.main?.pressure, unit: 'Pa', description: 'Pressure' },
-                            { value: openWeatherData?.main?.feels_like, unit: '°C', description: 'Feels Like' },
-                            { value: openWeatherData?.visibility, unit: 'm', description: 'Visibility' }  
-                        ]}
-                    />
-                    <GraphCard title={"Tidal Times"} />
-                    <GraphCard title={"Wave Height"} />
-                    <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
-                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
-                </div>
-            )}
-        </main>
-    </>
+    
+            <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
+                {weatherData && (
+                    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <WeatherInfo temperature={weatherData?.current?.temp_c} summary={weatherData?.current?.condition?.text} location={weatherData?.location} icon={getWeatherIcon(weatherData?.current?.condition?.code)} coordinates={coordinates} />
+                        <BigCard 
+                            title={"Current"}
+                            data={[
+                                { value: weatherData?.current?.wind_kph, unit: 'km/h', description: 'Wind' },
+                                { value: weatherData?.current?.precip_mm, unit: 'mm', description: 'Rain' },
+                                { value: weatherData?.current?.humidity, unit: '%', description: 'Humidity' }
+                            ]}
+                         />
+                        <BigCard 
+                            title={"Marine"}
+                            data={[
+                                { value: openWeatherData?.main?.pressure, unit: 'Pa', description: 'Pressure' },
+                                { value: openWeatherData?.main?.feels_like, unit: '°C', description: 'Feels Like' },
+                                { value: openWeatherData?.visibility, unit: 'm', description: 'Visibility' }  
+                            ]}
+                        />
+                        <GraphCard title={"Tidal Times"} />
+                        <GraphCard title={"Wave Height"} />
+                        <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday[0].hour} />
+                        <CardList title={"Daily"} data={weatherData?.forecast?.forecastday} />
+                    </div>
+                )}
+            </main>
+        </>
   )
 }
 

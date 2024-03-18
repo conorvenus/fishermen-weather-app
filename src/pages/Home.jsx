@@ -88,7 +88,7 @@ function Home() {
     }, []);
 
     function handleSubmit(event) {
-        event.preventDefault();
+        event?.preventDefault();
         fetchWeatherAPI(location).then(coords => {
             fetchOpenWeatherMap(coords.latitude, coords.longitude);
         })
@@ -108,6 +108,7 @@ function Home() {
 
     const tidalChartRef = useRef(null);
     const waveChartRef = useRef(null);
+
     useEffect(() => {
         if (coordinates.latitude != null && coordinates.longitude != null) {
             fetchTidalData();
@@ -267,7 +268,7 @@ function Home() {
 
             <header className="flex w-full h-fit px-8">
                 <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
-                    <button onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
+                    <button type="button" onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
                         <i className="fas fa-map-marker-alt"></i>
                     </button>
                     <div className="flex items-center gap-4 bg-dark-gray border border-gray rounded-2xl w-full py-2 px-4 shadow-primary relative">
@@ -282,7 +283,7 @@ function Home() {
                             }} 
                         />
                         {suggestions.length > 0 && (
-                            <ul className="suggestions-dropdown absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-sm shadow-md">
+                            <ul className="suggestions-dropdown absolute left-0 mt-2 w-full bg-dark-gray border border-gray rounded-sm shadow-md">
                                 {suggestions.map((suggestion, index) => (
                                     <li key={index} onClick={() => handleSuggestionClick(suggestion)} className="cursor-pointer px-4 py-2 hover:bg-gray-100">{suggestion}</li>
                                 ))}

@@ -89,11 +89,13 @@ function Home() {
 
     function handleSubmit(event) {
         event.preventDefault();
-        fetchWeatherAPI(location);
-        fetchOpenWeatherMap(location);
+        fetchWeatherAPI(location).then(coords => {
+            fetchOpenWeatherMap(coords.latitude, coords.longitude);
+        })
     }
 
     async function fetchLocationSuggestions(query) {
+        if (query.length < 3) return setSuggestions([]);
         const response = await fetch(`https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${query}`);
         const data = await response.json();
         setSuggestions(data.map(item => item.name));

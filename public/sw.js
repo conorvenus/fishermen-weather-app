@@ -4,14 +4,15 @@ self.addEventListener('install', function(event) {
         const cache = await caches.open('v1');
         await cache.addAll([
             '/',
-            '/pins'
+            '/pins',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
         ]);
     }());
 });
 
 // on every fetch request, try to fetch from cache first, otherwise fetch from network
 self.addEventListener('fetch', function(event) {
-    if (event.request.url.includes(self.location.origin)) {
+    if (event.request.url.includes(self.location.origin) || event.request.url.includes('cdnjs')) {
         event.respondWith(async function() {
             // try to fetch from v1 cache
             const cache = await caches.open('v1');

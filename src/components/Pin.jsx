@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useLocations } from "../hooks/UseLocations.jsx"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
+import timesago from 'timesago'
+import { capitalize } from "../utils.jsx"
 
 const key = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
 
@@ -48,7 +50,7 @@ function Pin({ location, delay }) {
                 <div className="flex items-center gap-2">
                     <div className="flex shadow-primary items-center gap-2 bg-gray rounded-lg px-2 py-1 text-xs text-light-gray">
                         <i className="fa-solid fa-download"></i>
-                        <p>Next 7 Days</p>
+                        <p>{capitalize(timesago(location?.lastUpdated))}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">

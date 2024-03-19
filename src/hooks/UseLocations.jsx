@@ -22,6 +22,7 @@ function LocationProvider({ children }) {
         setLocations(locations => {
             const existing = locations.find(l => l.name === location.name && l.country === location.country)
             if (existing) {
+                existing.lastUpdated = new Date().toISOString()
                 return locations
             }
             return [...locations, location]

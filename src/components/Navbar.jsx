@@ -1,9 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 function Navbar() {
     const [isLocked, setIsLocked] = useState(false);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+    useEffect(() => {
+        window.addEventListener('online', () => setIsOnline(true));
+        window.addEventListener('offline', () => setIsOnline(false));
+
+        return () => {
+            window.removeEventListener('online', () => setIsOnline(true));
+            window.removeEventListener('offline', () => setIsOnline(false));
+        }
+    }, [])
 
     function handleLockClick() {
         setIsLocked(true)
@@ -15,6 +26,11 @@ function Navbar() {
 
     return (
         <>
+            {!isOnline && (
+                <div className="bg-dark-gray p-4 opacity-50 flex justify-center items-center rounded-2xl animate-pulse">
+                    <p className="text-light-gray font-medium">You are offline, and will see stale data!</p>
+                </div>
+            )} {/* Overlay when offline */}
             {isLocked && <div className="fixed inset-0 bg-black opacity-50 z-50"></div>} {/* Overlay when locked */}
             <Outlet />
 

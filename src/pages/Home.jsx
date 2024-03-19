@@ -24,6 +24,16 @@ function Home() {
     const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });//for graphs
     const [hourlyWeather, setHourlyWeather] = useState([]);//to display hourly weather
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+    useEffect(() => {
+        window.addEventListener('online', () => setIsOnline(true));
+        window.addEventListener('offline', () => setIsOnline(false));
+        return () => {
+            window.removeEventListener('online', () => setIsOnline(true));
+            window.removeEventListener('offline', () => setIsOnline(false));
+        }
+    })
     
     async function fetchWeatherAPI(loc) {
         setIsLoading(true);
@@ -43,7 +53,9 @@ function Home() {
             const location = {
                 name: data.location.name,
                 country: data.location.country,
-                selected: false
+                selected: false,
+                lastUpdated: new Date().toISOString(),
+                data
             };
             addLocation(location);
             selectLocation(location);
@@ -71,6 +83,11 @@ function Home() {
     useEffect(() => {
         const selectedLocation = getSelectedLocation();
         if (selectedLocation) {
+            if (!isOnline) {
+                setWeatherData(selectedLocation.data);
+                setCoordinates({ latitude: selectedLocation.data.location.lat, longitude: selectedLocation.data.location.lon });
+                return;
+            }
             fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`).then(coords => {
                 fetchOpenWeatherMap(coords.latitude, coords.longitude);
             })

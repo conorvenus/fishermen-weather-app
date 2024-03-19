@@ -7,6 +7,18 @@ import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { LocationProvider } from './hooks/UseLocations.jsx'
 
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('./sw.js')
+//       .then(reg => {
+//         console.log('Service Worker registered')
+//       })
+//       .catch(err => {
+//         console.log('Service Worker registration failed: ', err)
+//       })
+//   })
+// }
+
 const router = createBrowserRouter([
   {
     element: <Navbar />,

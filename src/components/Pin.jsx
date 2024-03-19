@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react"
 import { useLocations } from "../hooks/UseLocations.jsx"
 import { useNavigate } from "react-router-dom"
+import { motion } from "framer-motion"
 import { format } from "timeago.js"
 import { capitalizeEachWord } from "../utils.jsx"
 
 const key = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
 
-function Pin({ location }) {
+function Pin({ location, delay }) {
     const [image, setImage] = useState(null)
     const { selectLocation, removeLocation } = useLocations()
     const navigate = useNavigate()
@@ -34,7 +35,7 @@ function Pin({ location }) {
     }
 
     return (
-        <div className="bg-dark-gray border border-gray h-full max-h-60 rounded-2xl w-full shadow-primary text-center p-4 grid grid-cols-3 gap-4 items-center">
+        <motion.div initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay}} className="bg-dark-gray border border-gray h-full max-h-60 rounded-2xl w-full shadow-primary text-center p-4 grid grid-cols-3 gap-4 items-center">
             <div className="rounded-2xl shadow-primary overflow-hidden h-full">
                 {image ? 
                 <img className="h-full w-full object-cover" src={image} /> :
@@ -70,7 +71,7 @@ function Pin({ location }) {
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
 

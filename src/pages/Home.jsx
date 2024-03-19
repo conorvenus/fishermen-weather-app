@@ -6,6 +6,7 @@ import WeatherInfo from "../components/WeatherInfo.jsx";
 import WeatherGraphs from "../components/WeatherGraphs.jsx";
 import { useLocations } from "../hooks/UseLocations.jsx";
 import { getWeatherIcon } from "../utils.jsx";
+import { motion } from "framer-motion";
 
 // api keys
 // const WEATHER_API_KEY = "905f1a7f4bc64c91bb1150432240403";old
@@ -170,7 +171,7 @@ function Home() {
         <>
             <GlowCircle x={0} y={0} opacity={0.15} blur={60} />
 
-            <header className="flex w-full h-fit px-8">
+            <motion.header initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1}} className="flex w-full h-fit px-8">
                 <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
                     <button type="button" onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
                         <i className="fas fa-map-marker-alt"></i>
@@ -198,7 +199,7 @@ function Home() {
                         <i className="fa-solid fa-arrow-pointer"></i>
                     </button>
                 </form>
-            </header>
+            </motion.header>
 
         <main className="flex items-center flex-col gap-4 w-full h-full overflow-auto px-8 py-8 rounded-[80px]">
             {weatherData && (
@@ -222,7 +223,8 @@ function Home() {
                     />
                     <WeatherGraphs coordinates={coordinates} />
                     <CardList title={"Hourly"} data={hourlyWeather} />
-                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday.map(day => ({...day, date: new Date(day.date).toLocaleDateString('en-US', { weekday: 'long' })}))} />                </div>
+                    <CardList title={"Daily"} data={weatherData?.forecast?.forecastday.map(day => ({...day, date: new Date(day.date).toLocaleDateString('en-US', { weekday: 'long' })}))} />
+                </div>
             )}
         </main>
     </>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
 function Navbar() {
     const [isLocked, setIsLocked] = useState(false);
@@ -33,7 +34,7 @@ function Navbar() {
             {isLocked && <div className="fixed inset-0 bg-black opacity-50 z-50"></div>} {/* Overlay when locked */}
             <Outlet />
 
-            <nav className="grid grid-cols-3 gap-8 relative">
+            <motion.nav initial={{y: 100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay: 0.8}} className="grid grid-cols-3 gap-8 relative">
                 <NavLink to="/" className={({ isActive }) => `flex flex-col items-center justify-center text-light-gray ${isActive ? "nav-selected" : ""}` }>
                     <i className="fa-solid fa-home"></i>
                     Home
@@ -47,7 +48,7 @@ function Navbar() {
                     <i className="fa-solid fa-location-dot"></i>
                     Pins
                 </NavLink>
-            </nav>
+            </motion.nav>
         </>
     )
 }

@@ -1,6 +1,8 @@
+import { motion } from 'framer-motion'
+
 function BigCard({ title, data }) {
     return (
-        <div className="flex flex-col gap-2 text-light-gray w-full">
+        <motion.div initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay: 0.4}}  className="flex flex-col gap-2 text-light-gray w-full">
             <h1>{title}</h1>
             <div className="bg-dark-gray border border-gray rounded-2xl w-full min-h-[200px] shadow-primary grid grid-cols-3 text-center items-center">
                 {data.map((item, idx) => ( 
@@ -10,7 +12,7 @@ function BigCard({ title, data }) {
                     </div>
                 ))}
             </div>
-        </div>
+        </motion.div>
     )
 }
 

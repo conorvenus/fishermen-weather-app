@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import { useLocations } from "../hooks/UseLocations.jsx"
 import { useNavigate } from "react-router-dom"
+import { format } from "timeago.js"
+import { capitalizeEachWord } from "../utils.jsx"
 
 const key = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
 
@@ -47,7 +49,7 @@ function Pin({ location }) {
                 <div className="flex items-center gap-2">
                     <div className="flex shadow-primary items-center gap-2 bg-gray rounded-lg px-2 py-1 text-xs text-light-gray">
                         <i className="fa-solid fa-download"></i>
-                        <p>Next 7 Days</p>
+                        <p>{capitalizeEachWord(format(location?.lastUpdated))}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">

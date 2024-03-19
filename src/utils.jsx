@@ -69,4 +69,8 @@ function getWeatherIcon(code) {
     return weatherIcons[code]
 }
 
-export { getWeatherIcon }
+function capitalizeEachWord(str) {
+    return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+}
+
+export { getWeatherIcon, capitalizeEachWord }

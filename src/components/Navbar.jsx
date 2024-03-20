@@ -50,7 +50,7 @@ function Navbar() {
             {isLocked && <div className="fixed inset-0 bg-black opacity-50 z-50"></div>} {/* Overlay when locked */}
             <Outlet />
 
-            <motion.nav initial={{y: 100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay: 0.8}} whileHover={"themeMotion"} className="grid grid-cols-3 gap-x-8 gap-y-4 relative place-content-center">
+            <motion.nav initial={{y: 100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay: 0.8}} whileTap={"themeMotion"} whileHover={"themeMotion"} className="grid grid-cols-3 gap-x-8 gap-y-4 relative place-content-center">
                 <NavLink to="/" className={({ isActive }) => `flex flex-col items-center justify-center dark:text-light-gray text-gray ${isActive ? "nav-selected" : ""}` }>
                     <i className="fa-solid fa-home"></i>
                     Home

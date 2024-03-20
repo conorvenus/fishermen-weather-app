@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import localforage from 'localforage';
+import { useOnline } from '../hooks/UseOnline.jsx'
 
 function Navbar() {
     const [isLocked, setIsLocked] = useState(false);
-    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const { isOnline } = useOnline();
     const [isDark, setIsDark] = useState(false);
 
     const themeAnimation = {
@@ -29,14 +30,6 @@ function Navbar() {
                 document.documentElement.classList.add("dark")
             }
         })
-
-        window.addEventListener('online', () => setIsOnline(true));
-        window.addEventListener('offline', () => setIsOnline(false));
-
-        return () => {
-            window.removeEventListener('online', () => setIsOnline(true));
-            window.removeEventListener('offline', () => setIsOnline(false));
-        }
     }, [])
 
     function handleLockClick() {

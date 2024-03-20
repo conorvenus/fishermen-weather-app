@@ -7,6 +7,7 @@ import WeatherGraphs from "../components/WeatherGraphs.jsx";
 import { useLocations } from "../hooks/UseLocations.jsx";
 import { getWeatherIcon } from "../utils.jsx";
 import { motion } from "framer-motion";
+import { useOnline } from "../hooks/UseOnline.jsx";
 
 // api keys
 // const WEATHER_API_KEY = "905f1a7f4bc64c91bb1150432240403";old
@@ -23,18 +24,8 @@ function Home() {
     const [openWeatherData, setOpenWeatherData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });//for graphs
-    const [hourlyWeather, setHourlyWeather] = useState([]);//to display hourly weather
-    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const { isOnline } = useOnline();
 
-    useEffect(() => {
-        window.addEventListener('online', () => setIsOnline(true));
-        window.addEventListener('offline', () => setIsOnline(false));
-        return () => {
-            window.removeEventListener('online', () => setIsOnline(true));
-            window.removeEventListener('offline', () => setIsOnline(false));
-        }
-    })
-    
     async function fetchWeatherAPI(loc) {
         setIsLoading(true);
         try {
@@ -89,9 +80,10 @@ function Home() {
                 return;
             }
             fetchWeatherAPI(`${selectedLocation.name},${selectedLocation.country}`).then(coords => {
-                fetchOpenWeatherMap(coords.latitude, coords.longitude);
+                if (coords) fetchOpenWeatherMap(coords.latitude, coords.longitude);
             })
         } else {
+            setIsLoading(true);
             // Fetch live location
             navigator.geolocation.getCurrentPosition((position) => {
                 const { latitude, longitude } = position.coords;
@@ -101,9 +93,9 @@ function Home() {
             }, 
             (error) => {
                 console.error('Error getting geolocation:', error);
-                // default location if geolocation fails
-                fetchWeatherAPI(getSelectedLocation()?.name ?? "London");
-                fetchOpenWeatherMap(getSelectedLocation()?.name ?? "London");
+                fetchWeatherAPI("London").then(coords => {
+                    if (coords) fetchOpenWeatherMap(coords.latitude, coords.longitude);
+                });
             });
         }
     }, []);
@@ -111,7 +103,7 @@ function Home() {
     function handleSubmit(event) {
         event?.preventDefault();
         fetchWeatherAPI(location).then(coords => {
-            fetchOpenWeatherMap(coords.latitude, coords.longitude);
+            if (coords) fetchOpenWeatherMap(coords.latitude, coords.longitude);
         })
     }
 
@@ -126,23 +118,6 @@ function Home() {
         setLocation(suggestion);
         setSuggestions([]);
     }
-
-    useEffect(() => {
-        if (weatherData.forecast && weatherData.forecast.forecastday && weatherData.forecast.forecastday.length > 0) {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const todayHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[0]?.hour) 
-                                        ? weatherData.forecast.forecastday[0].hour : [];
-            const tomorrowHourlyForecast = Array.isArray(weatherData?.forecast?.forecastday[1]?.hour) 
-                                           ? weatherData.forecast.forecastday[1].hour : [];
-            const hourlyForecasts = [...todayHourlyForecast, ...tomorrowHourlyForecast];
-            const indexOfCurrentHour = hourlyForecasts.findIndex(hour => new Date(hour.time).getHours() === currentHour);
-            const next24Hours = hourlyForecasts.slice(indexOfCurrentHour, Math.min(indexOfCurrentHour + 24, hourlyForecasts.length));
-
-            setHourlyWeather(next24Hours);
-        }
-    }, [weatherData]);
-    
 
     async function refreshWeatherData() {
         setIsLoading(true);
@@ -162,10 +137,6 @@ function Home() {
             setIsLoading(false);
         }
     }
-    // added
-
-
-    
 
     return (
         <>
@@ -222,7 +193,7 @@ function Home() {
                         ]}
                     />
                     <WeatherGraphs coordinates={coordinates} />
-                    <CardList title={"Hourly"} data={hourlyWeather} />
+                    <CardList title={"Hourly"} data={weatherData?.forecast?.forecastday.map(day => day.hour).flat(1)} />
                     <CardList title={"Daily"} data={weatherData?.forecast?.forecastday.map(day => ({...day, date: new Date(day.date).toLocaleDateString('en-US', { weekday: 'long' })}))} />
                 </div>
             )}

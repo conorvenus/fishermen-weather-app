@@ -13,15 +13,20 @@ function Pin({ location, delay }) {
     const navigate = useNavigate()
 
     async function fetchImage() {
-        const response = await fetch(`https://api.pexels.com/v1/search?query=${location?.name}&per_page=1`, {
-            method: "GET",
-            headers: {
-                Authorization: key
+        try {
+            const response = await fetch(`https://api.pexels.com/v1/search?query=${location?.name}&per_page=1`, {
+                method: "GET",
+                headers: {
+                    Authorization: key
+                }
+            })
+            if (!response.ok) throw new Error("Failed to fetch image")
+            const data = await response.json()
+            if (data.photos.length > 0) {
+                setImage(data.photos[0].src.large)
             }
-        })
-        const data = await response.json()
-        if (data.photos.length > 0) {
-            setImage(data.photos[0].src.large)
+        } catch (error) {
+            console.error(error)
         }
     }
 

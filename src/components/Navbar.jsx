@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import localforage from 'localforage';
 
 function Navbar() {
     const [isLocked, setIsLocked] = useState(false);
@@ -14,11 +15,21 @@ function Navbar() {
     };
 
     function toggleTheme() {
-        setIsDark(!isDark)
+        setIsDark(isDark => {
+            localforage.setItem('theme', isDark ? 'light' : 'dark')
+            return !isDark
+        })
         document.documentElement.classList.toggle("dark")
     }
 
     useEffect(() => {
+        localforage.getItem('theme').then((value) => {
+            if (value === 'dark') {
+                setIsDark(true)
+                document.documentElement.classList.add("dark")
+            }
+        })
+
         window.addEventListener('online', () => setIsOnline(true));
         window.addEventListener('offline', () => setIsOnline(false));
 

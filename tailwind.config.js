@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{html,jsx,tsx,js,ts}", "index.html"],
+  darkMode: 'class',
   theme: {
       colors: {
         'black': '#15171A',
@@ -12,7 +13,7 @@ module.exports = {
         'transparent': 'transparent'
       },
       boxShadow: {
-        'primary': '0px 20px 40px rgba(0, 0, 0, 0.25)'
+        'primary': '0px 15px 50px rgba(0, 0, 0, 0.2)'
       }
   },
   plugins: [],

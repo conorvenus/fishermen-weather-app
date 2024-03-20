@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .nav-selected {
-    @apply text-white;
+    @apply dark:text-white text-black;
 }
 
 .nav-selected::after {
@@ -63,15 +63,12 @@ svg {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #17191C;
-  border: 1px solid #31353B;
-  @apply rounded-full;
+  @apply bg-[#17191C] /*bg-white*/ shadow-primary border border-[#31353B] /*border-gray*/ rounded-full;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #30343A;
-  @apply rounded-full;
+  @apply bg-[#30343A] /*bg-[#DFDFDF]*/ rounded-full;
 }
 
 .pulsing-btn {

@@ -173,14 +173,14 @@ function Home() {
 
             <motion.header initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1}} className="flex w-full h-fit px-8">
                 <form className="flex items-center gap-4 w-full max-w-2xl mx-auto" onSubmit={handleSubmit}>
-                    <button type="button" onClick={refreshWeatherData} className="bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
+                    <button type="button" onClick={refreshWeatherData} className="bg-blue text-white pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary">
                         <i className="fas fa-map-marker-alt"></i>
                     </button>
-                    <div className="flex items-center gap-4 bg-dark-gray border border-gray rounded-2xl w-full py-2 px-4 shadow-primary relative">
-                        <i className="fas fa-search text-light-gray"></i>
+                    <div className="flex items-center gap-4 bg-white border-white dark:bg-dark-gray border dark:border-gray rounded-2xl w-full py-2 px-4 shadow-primary relative text-gray dark:text-light-gray">
+                        <i className="fas fa-search"></i>
                         <input 
                             type="text" 
-                            className="bg-transparent outline-none text-light-gray w-full" 
+                            className="bg-transparent outline-none w-full" 
                             value={location} 
                             onChange={e => {
                                 setLocation(e.target.value);
@@ -195,7 +195,7 @@ function Home() {
                             </ul>
                         )}
                     </div>
-                    <button type="submit" className={`bg-blue pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary ${isLoading && 'loading'}`}>
+                    <button type="submit" className={`bg-blue text-white pulsing-btn rounded-full flex justify-center items-center h-full aspect-square shadow-primary ${isLoading && 'loading'}`}>
                         <i className="fa-solid fa-arrow-pointer"></i>
                     </button>
                 </form>

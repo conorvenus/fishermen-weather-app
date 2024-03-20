@@ -2,13 +2,13 @@ import { motion } from 'framer-motion'
 
 function BigCard({ title, data }) {
     return (
-        <motion.div initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay: 0.4}}  className="flex flex-col gap-2 text-light-gray w-full">
+        <motion.div initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay: 0.4}}  className="flex flex-col gap-2 dark:text-light-gray text-gray w-full">
             <h1>{title}</h1>
-            <div className="bg-dark-gray border border-gray rounded-2xl w-full min-h-[200px] shadow-primary grid grid-cols-3 text-center items-center">
+            <div className="dark:bg-dark-gray border dark:border-gray bg-white border-white rounded-2xl w-full min-h-[200px] shadow-primary grid grid-cols-3 text-center items-center">
                 {data.map((item, idx) => ( 
-                    <div key={idx} className="h-[60%] w-full flex items-center flex-col justify-center border border-l-0 border-y-0 border-r-light-gray/20">
+                    <div key={idx} className="h-[60%] w-full flex items-center flex-col justify-center border border-l-0 border-y-0 dark:border-r-light-gray/20 border-r-gray/20 dark:text-light-gray text-dark-gray">
                         <h1 className="font-bold">{item.value} {item.unit}</h1>
-                        <p className="text-light-gray">{item.description}</p>
+                        <p>{item.description}</p>
                     </div>
                 ))}
             </div>

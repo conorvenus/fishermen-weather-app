@@ -35,7 +35,7 @@ function Pin({ location, delay }) {
     }
 
     return (
-        <motion.div initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay}} className="bg-dark-gray border border-gray h-full max-h-60 rounded-2xl w-full shadow-primary text-center p-4 grid grid-cols-3 gap-4 items-center">
+        <motion.div initial={{y: -100, opacity: 0}} animate={{y: 0, opacity: 1}} transition={{duration: 1, delay}} className="dark:bg-dark-gray border dark:border-gray bg-white border-white h-full max-h-60 rounded-2xl w-full shadow-primary text-center p-4 grid grid-cols-3 gap-4 items-center">
             <div className="rounded-2xl shadow-primary overflow-hidden h-full">
                 {image ? 
                 <img className="h-full w-full object-cover" src={image} /> :
@@ -46,9 +46,9 @@ function Pin({ location, delay }) {
                 </div>}
             </div>
             <div className="flex flex-col items-start gap-2 col-span-2">
-                <h1 className="text-white font-medium text-left">{location?.name}, <span className="font-normal text-light-gray">{location?.country}</span></h1>
+                <h1 className="dark:text-white text-black font-medium text-left">{location?.name}, <span className="font-normal dark:text-light-gray text-gray">{location?.country}</span></h1>
                 <div className="flex items-center gap-2">
-                    <div className="flex shadow-primary items-center gap-2 bg-gray rounded-lg px-2 py-1 text-xs text-light-gray">
+                    <div className="flex shadow-primary items-center gap-2 bg-gray rounded-lg px-2 py-1 text-xs">
                         <i className="fa-solid fa-download"></i>
                         <p>{capitalizeEachWord(format(location?.lastUpdated))}</p>
                     </div>

@@ -8,10 +8,10 @@ function WeatherInfo({ temperature, summary, location, icon, coordinates }) {
                     {icon}
                     <h1 className="font-bold text-7xl lg:text-8xl">{temperature}&deg;</h1>
                 </div>
-                <p className="text-light-gray"><span className="text-white font-bold">{summary}</span> in {location?.name}, {location?.country}</p>
-                <div className="coordinates-display flex gap-8 text-white font-bold text-lg">
-                    <p>Lat: <span className="text-light-gray font-medium ml-1">{coordinates.latitude}</span></p>
-                    <p>Lon: <span className="text-light-gray font-medium ml-1">{coordinates.longitude}</span></p>
+                <p className="dark:text-light-gray text-gray"><span className="dark:text-white font-bold">{summary}</span> in {location?.name}, {location?.country}</p>
+                <div className="coordinates-display flex gap-8 font-bold text-lg dark:text-white text-black">
+                    <p>Lat: <span className="dark:text-light-gray text-gray font-medium ml-1">{coordinates.latitude}</span></p>
+                    <p>Lon: <span className="dark:text-light-gray text-gray font-medium ml-1">{coordinates.longitude}</span></p>
                 </div>
             </motion.section>
         </>

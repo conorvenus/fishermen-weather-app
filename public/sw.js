@@ -4,7 +4,7 @@ self.addEventListener('install', function(event) {
         const cache = await caches.open('v1');
         await cache.addAll([
             '/',
-            '/pins',
+            // '/pins',
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
         ]);
     }());

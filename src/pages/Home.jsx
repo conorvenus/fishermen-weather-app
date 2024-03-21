@@ -100,6 +100,10 @@ function Home() {
                 if (coords) fetchOpenWeatherMap(coords.latitude, coords.longitude);
             })
         } else {
+            // By default attempt to fetch London
+            fetchWeatherAPI("London").then(coords => {
+                if (coords) fetchOpenWeatherMap(coords.latitude, coords.longitude);
+            });
             // If there is no selected location, set is loading to true, so that the loading spinner is shown
             setIsLoading(true);
             // Attempt to get the user's current location from the browser

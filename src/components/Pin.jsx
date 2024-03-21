@@ -5,23 +5,25 @@ import { motion } from "framer-motion"
 import { format } from "timeago.js"
 import { capitalizeEachWord } from "../utils.jsx"
 
-const key = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
+const PEXELS_API_KEY = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
 
 function Pin({ location, delay }) {
     const [image, setImage] = useState(null)
     const { selectLocation, removeLocation } = useLocations()
     const navigate = useNavigate()
 
+    // Fetch image from Pexels API
     async function fetchImage() {
         try {
             const response = await fetch(`https://api.pexels.com/v1/search?query=${location?.name}&per_page=1`, {
                 method: "GET",
                 headers: {
-                    Authorization: key
+                    Authorization: PEXELS_API_KEY
                 }
             })
             if (!response.ok) throw new Error("Failed to fetch image")
             const data = await response.json()
+            // If there are photos, set the image to the first one 
             if (data.photos.length > 0) {
                 setImage(data.photos[0].src.large)
             }
@@ -30,10 +32,12 @@ function Pin({ location, delay }) {
         }
     }
 
+    // Fetch image when the pin card loads
     useEffect(() => {
         fetchImage()
     }, [])
 
+    // When the user clicks on the view button, select the location and navigate to the home page
     function viewLocation() {
         selectLocation(location)
         navigate("/")

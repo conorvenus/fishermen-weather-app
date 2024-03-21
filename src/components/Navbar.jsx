@@ -9,21 +9,27 @@ function Navbar() {
     const { isOnline } = useOnline();
     const [isDark, setIsDark] = useState(false);
 
+    // Frame motion animation for the theme button to pop up on hover
     const themeAnimation = {
         themeMotion: {
             height: '40px'
         }
     };
 
+    // Toggle the theme between light and dark
     function toggleTheme() {
+        // Set the theme in local storage and toggle the theme
         setIsDark(isDark => {
             localforage.setItem('theme', isDark ? 'light' : 'dark')
             return !isDark
         })
+        // Toggle it on the body element, which will tell Tailwind to use the dark theme
         document.documentElement.classList.toggle("dark")
     }
 
+    // When the component loads, check if the theme is dark in local storage
     useEffect(() => {
+        // If the theme is dark, set the dark theme on the body element and the state
         localforage.getItem('theme').then((value) => {
             if (value === 'dark') {
                 setIsDark(true)
@@ -32,6 +38,7 @@ function Navbar() {
         })
     }, [])
 
+    // Lock and unlock the app
     function handleLockClick() {
         setIsLocked(true)
     }

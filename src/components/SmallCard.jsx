@@ -2,21 +2,27 @@ import { getWeatherIcon } from "../utils"
 
 function SmallCard({ data }) {
     return (
-        <div className="small-card flex flex-col items-center justify-center gap-1 bg-dark-gray border border-gray rounded-2xl p-4 min-h-[200px] shadow-primary">
-            {data?.day ? (
-                <>
+        <>
+        {data?.day ? (
+            <div className="flex-none w-[calc((100%-2rem)/3)]">
+                <div className="small-card flex flex-col items-center justify-center gap-1 dark:bg-dark-gray border dark:border-gray rounded-2xl p-4 min-h-[200px] shadow-primary bg-white border-white">
                     {getWeatherIcon(data?.day?.condition?.code)}
-                    <h1 className="text-white font-medium">{data?.date}</h1>
-                    <h2 className="text-light-gray">{data?.day?.avgtemp_c}&deg;</h2>
-                </>
+                    <h1 className="dark:text-white text-black font-medium">{data?.date}</h1>
+                    <h2 className="dark:text-light-gray text-gray">{data?.day?.avgtemp_c}&deg;</h2>
+                </div>
+            </div>
             ) : (
-                <>
-                    {getWeatherIcon(data?.condition?.code)}
-                    <h1 className="text-white font-medium">{data?.time?.split(' ')[1]}</h1>
-                    <h2 className="text-light-gray">{data?.temp_c}&deg;</h2>
-                </>
+                data?.time_epoch >= new Date().valueOf() / 1000 && (
+                    <div className="flex-none w-[calc((100%-2rem)/3)]">
+                        <div className="small-card flex flex-col items-center justify-center gap-1 dark:bg-dark-gray border dark:border-gray rounded-2xl p-4 min-h-[200px] shadow-primary bg-white border-white">
+                            {getWeatherIcon(data?.condition?.code)}
+                            <h1 className="dark:text-white text-black font-medium">{data?.time?.split(' ')[1]}</h1>
+                            <h2 className="dark:text-light-gray text-gray">{data?.temp_c}&deg;</h2>
+                        </div>
+                    </div>
+                )
             )}
-        </div>
+        </>
     )
 }
 

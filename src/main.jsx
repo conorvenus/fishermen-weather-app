@@ -6,18 +6,19 @@ import Navbar from './components/Navbar.jsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { LocationProvider } from './hooks/UseLocations.jsx'
+import { OnlineProvider } from './hooks/UseOnline.jsx'
 
-// if ('serviceWorker' in navigator) {
-//   window.addEventListener('load', () => {
-//     navigator.serviceWorker.register('./sw.js')
-//       .then(reg => {
-//         console.log('Service Worker registered')
-//       })
-//       .catch(err => {
-//         console.log('Service Worker registration failed: ', err)
-//       })
-//   })
-// }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        console.log('Service Worker registered')
+      })
+      .catch(err => {
+        console.log('Service Worker registration failed: ', err)
+      })
+  })
+}
 
 const router = createBrowserRouter([
   {
@@ -37,8 +38,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <LocationProvider>
-      <RouterProvider router={router} />
-    </LocationProvider>
+    <OnlineProvider>
+      <LocationProvider>
+        <RouterProvider router={router} />
+      </LocationProvider>
+    </OnlineProvider>
   </React.StrictMode>,
 )

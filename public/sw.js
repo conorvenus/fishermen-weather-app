@@ -1,9 +1,11 @@
 // on service worker install, cache the home and pins pages
 self.addEventListener('install', function(event) {
     event.waitUntil(async function() {
-        const cache = await caches.open('v9');
+        const cache = await caches.open('v10');
         await cache.addAll([
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.ttf',
             '/',
             '/pins',
             '/icon-192x192.png',
@@ -23,7 +25,7 @@ self.addEventListener('fetch', function(event) {
     if (event.request.url.includes(self.location.origin) || event.request.url.includes('cdnjs')) {
         event.respondWith(async function() {
             // try to fetch from v1 cache
-            const cache = await caches.open('v9');
+            const cache = await caches.open('v10');
             const cachedResponse = await cache.match(event.request);
 
             // if it is cached, return it

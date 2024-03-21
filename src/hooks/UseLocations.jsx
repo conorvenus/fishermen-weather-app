@@ -32,14 +32,27 @@ function LocationProvider({ children }) {
                         return {
                             ...l,
                             data: location.data,
-                            lastUpdated: new Date().toISOString()
+                            lastUpdated: new Date().toISOString(),
+                            selected: true
                         }
                     }
-                    return l
+                    return {
+                        ...l,
+                        selected: false
+                    }
                 })
             }
             // If the location doesn't exist, add a new one to the locations state
-            return [...locations, location]
+            return [...locations.map(l => {
+                return {
+                    ...l,
+                    selected: false
+                }
+            }), {
+                ...location,
+                lastUpdated: new Date().toISOString(),
+                selected: true
+            }]
         })
     }
 

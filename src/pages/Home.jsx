@@ -20,7 +20,7 @@ function Home() {
     const [weatherData, setWeatherData] = useState({});
     const [location, setLocation] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-    const { getSelectedLocation, addLocation, selectLocation } = useLocations();
+    const { getSelectedLocation, addLocation } = useLocations();
     const [openWeatherData, setOpenWeatherData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });//for graphs
@@ -54,7 +54,6 @@ function Home() {
                 data
             };
             addLocation(location);
-            selectLocation(location);
             // Return the coordinates of the location, to use for fetching open weather data
             return { latitude: data.location.lat, longitude: data.location.lon };
         } catch (error) {

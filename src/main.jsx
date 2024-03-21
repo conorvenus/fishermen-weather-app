@@ -9,16 +9,18 @@ import { LocationProvider } from './hooks/UseLocations.jsx'
 import { OnlineProvider } from './hooks/UseOnline.jsx'
 
 // If the browser supports service workers, register the sw.js file (for offline support)
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => {
-        console.log('Service Worker registered')
-      })
-      .catch(err => {
-        console.log('Service Worker registration failed: ', err)
-      })
-  })
+if (import.meta.env.PROD) {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => {
+          console.log('Service Worker registered')
+        })
+        .catch(err => {
+          console.log('Service Worker registration failed: ', err)
+        })
+    })
+  }
 }
 
 // Create a browser router, with the Navbar being rendered on every page, map / to Home and /pins to Pins

@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { format } from "timeago.js"
 import { capitalizeEachWord } from "../utils.jsx"
 
-const PEXELS_API_KEY = "wHBQCr2BBprazJ9nCrxf6Xhkp17PCcHlflHy40EuUJkdm8F2BPNhz6Gd"
+const PEXELS_API_KEY = ""
 
 function Pin({ location, delay }) {
     const [image, setImage] = useState(null)

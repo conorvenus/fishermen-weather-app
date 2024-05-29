@@ -9,12 +9,8 @@ import { getWeatherIcon } from "../utils.jsx";
 import { motion } from "framer-motion";
 import { useOnline } from "../hooks/UseOnline.jsx";
 
-// api keys
-// const WEATHER_API_KEY = "905f1a7f4bc64c91bb1150432240403";old
-const WEATHER_API_KEY = "51c9ed3ce362443dac1114615241803"; //new
-const OPEN_WEATHER_API_KEY = 'c71e8f930b674cc9033f4f2b9d9b7f36';
-// const WORLD_WEATHER_API_KEY = '5d566da289364451abf110654241303'; //old
-// const WORLD_WEATHER_API_KEY = 'bd5271cc0f444116a32190453241803'; //new
+const WEATHER_API_KEY = "";
+const OPEN_WEATHER_API_KEY = "";
 
 function Home() {
     const [weatherData, setWeatherData] = useState({});
